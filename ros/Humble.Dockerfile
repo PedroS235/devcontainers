@@ -30,7 +30,8 @@ RUN mkdir -p /home/$USERNAME/ws/src
 FROM ros_setup AS dev_tools
 
 # Install pre-requisites
-RUN apt install -y git ninja-build gettext cmake curl build-essential
+RUN apt install -y \
+    git ninja-build gettext cmake curl build-essential python3-venv python3-pip
 
 # Install Neovim
 WORKDIR /home/opt/
