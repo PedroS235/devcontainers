@@ -77,8 +77,8 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 FROM dev_tools AS dotfiles
 
 # Setup .bashrc
-COPY config/bashrc /home/user/.bashrc
-COPY config/gitconfig /home/user/.gitconfig
+COPY config/bashrc /home/$USERNAME/.bashrc
+COPY config/gitconfig /home/$USERNAME/.gitconfig
 
 WORKDIR /home/$USERNAME
 USER $USERNAME

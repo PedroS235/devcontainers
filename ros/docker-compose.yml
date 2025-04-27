@@ -6,7 +6,9 @@ services:
       context: .
       dockerfile: Humble.Dockerfile
       args:
-        USERNAME: $USER
+        USERNAME: $USERNAME
+        USER_UID: $UID
+        USER_GID: $GID
     volumes:
       - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -18,3 +20,14 @@ services:
     privileged: true
     stdin_open: true
     tty: true
+    depends_on:
+      - volume-init
+
+  # Used to set correct U/G(ID) for shared folder
+  volume-init:
+    image: busybox
+    command: ["chown", "-R", "$UID:$GID", "/data"]
+    volumes:
+      - ./shared:/data
+    entrypoint: ""
+    restart: "no"
