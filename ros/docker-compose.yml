@@ -1,0 +1,20 @@
+services:
+  humble_container:
+    image: devcontainer/ros
+    container_name: devcontainer/ros
+    build:
+      context: .
+      dockerfile: Humble.Dockerfile
+      args:
+        USERNAME: $USER
+    volumes:
+      - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./shared:/home/shared:rw
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
+      DISPLAY: $DISPLAY
+    network_mode: "host"
+    privileged: true
+    stdin_open: true
+    tty: true

@@ -4,9 +4,6 @@ ARG USERNAME=user
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# ARG ssh_prv_key
-# ARG ssh_pub_key
-
 ENV DEBIAN_FRONTEND=noninteractive
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
 ENV NODE_VERSION=22
@@ -23,14 +20,14 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 RUN mkdir -p /home/$USERNAME/
 
-FROM user_creation AS ros_pkgs
+FROM user_creation AS ros_setup
 
 RUN apt update && apt install --no-install-recommends -y \
     ros-$ROS_DISTRO-rmw-cyclonedds-cpp
 
-RUN rosdep update
+RUN mkdir -p /home/$USERNAME/ws/src
 
-FROM ros_pkgs AS dev_tools
+FROM ros_setup AS dev_tools
 
 # Install pre-requisites
 RUN apt install -y git ninja-build gettext cmake curl build-essential
@@ -77,25 +74,12 @@ USER root
 # Install Starship
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
-# # Setup SSH keys
-# RUN mkdir -p -m 0700 /home/user/.ssh && \
-#     ssh-keyscan -H github.com >> /home/user/.ssh/known_hosts
-#
-# RUN echo "$ssh_prv_key" > /home/user/.ssh/id_ed25519 && \
-#     echo "$ssh_pub_key" > /home/user/.ssh/id_ed25519.pub && \
-#     chmod 600 /home/user/.ssh/id_ed25519 && \
-#     chmod 600 /home/user/.ssh/id_ed25519.pub
-#
-# # Setup .bashrc
-# COPY config/bashrc /home/user/.bashrc
-# COPY config/gitconfig /home/user/.gitconfig
-# RUN chmod 777 /home/user/.bashrc
-# RUN chmod 777 /home/user/.gitconfig
-#
-#
-# # Default Command
+FROM dev_tools AS dotfiles
+
+# Setup .bashrc
+COPY config/bashrc /home/user/.bashrc
+COPY config/gitconfig /home/user/.gitconfig
 
 WORKDIR /home/$USERNAME
 USER $USERNAME
 CMD ["/bin/bash"]
-
