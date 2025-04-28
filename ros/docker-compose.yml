@@ -1,7 +1,7 @@
 services:
   humble_container:
-    image: devcontainer/ros
-    container_name: devcontainer/ros
+    image: devcontainer:ros_humble
+    container_name: devcontainer_ros
     build:
       context: .
       dockerfile: Humble.Dockerfile
