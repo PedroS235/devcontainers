@@ -18,3 +18,7 @@
     logg = log --graph --all --decorate --abbrev-commit 
 [pull]
 	rebase = false
+
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+
