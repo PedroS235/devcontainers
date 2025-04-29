@@ -1,0 +1,153 @@
+#!/bin/bash
+
+# Change here where your docker-compose is located
+DOCKER_COMPOSE_FILE="$HOME/Projects/devcontainers/ros/docker-compose.yml"
+SERVICES_BLACKLIST=("volume-init")
+
+log_info(){
+    echo -e "\033[32mINFO: \033[0m${1}"
+}
+
+log_warning() {
+    echo -e "\033[33mWARN: \033[0m${1}"
+}
+
+log_error() {
+    echo -e "\033[31mERROR: \033[0m${1}"
+}
+
+start_devcontainer(){
+    log_info "Starting $1 service"
+    docker compose -f $DOCKER_COMPOSE_FILE up -d $1
+}
+
+start_all_devcontainers(){
+    log_info "Starting all services"
+    docker compose -f $DOCKER_COMPOSE_FILE up -d
+}
+
+stop_devcontainer(){
+    log_info "Stopping $1 service"
+    docker compose -f $DOCKER_COMPOSE_FILE stop $1
+}
+
+stop_all_devcontainers(){
+    log_info "Stopping all services"
+    docker compose -f $DOCKER_COMPOSE_FILE stop
+}
+
+build_devcontainers(){
+    log_info "Building all images"
+    docker compose -f $DOCKER_COMPOSE_FILE up --build
+}
+
+remove_devcontainer(){
+    stop_devcontainer $1
+    log_info "Removing $1 service"
+    docker compose -f $DOCKER_COMPOSE_FILE rm $1
+}
+
+remove_devcontainers(){
+    log_info "Removing all services"
+    docker compose -f $DOCKER_COMPOSE_FILE down
+}
+
+get_service_selection(){
+    services=$(docker compose -f $DOCKER_COMPOSE_FILE ps --services --all)
+    for pattern in "${SERVICES_BLACKLIST[@]}"; do
+        services=$(echo "$services" | grep -v -i "$pattern")
+    done
+
+    lines=$(echo "$services" | wc -l)
+
+    if [[ lines -eq "1" ]]; then
+        echo "$services"
+    else
+        echo "$services" | fzf
+    fi
+}
+
+exec_container(){
+    docker compose -f $DOCKER_COMPOSE_FILE exec $1 bash
+}
+
+gui_bridge(){
+    xhost +local:docker >> /dev/null
+}
+
+help() {
+    echo "Usage: ros <command> [options]"
+    echo ""
+    echo "Commands:"
+    echo "  start | up          Start a dev container or all containers."
+    echo "    [service]         Start the specified dev container (interactive)."
+    echo "    all | a           Start all dev containers."
+    echo ""
+    echo "  enter               Enter a dev container (interactive)."
+    echo "    [service]         Start the specified dev container and enter it."
+    echo "    [no argument]     Enter a dev container by selecting a service."
+    echo ""
+    echo "  stop | s            Stop a dev container or all containers."
+    echo "    [service]         Stop the specified dev container."
+    echo "    all | a           Stop all dev containers."
+    echo ""
+    echo "  build | b           Build dev containers."
+    echo ""
+    echo "  remove | rm         Remove a dev container or all containers."
+    echo "    [service]         Remove the specified dev container."
+    echo "    all | a           Remove all dev containers."
+    echo ""
+    echo "  help | -h           Shows this helper menu"
+}
+
+case "$1" in
+    start | up)
+        case "$2" in
+            "")
+                start_devcontainer $(get_service_selection)
+                ;;
+            all|a)
+                start_all_devcontainers
+                ;;
+        esac
+        ;;
+    enter|"")
+        service=$(get_service_selection)
+        if [[ service -eq "" ]]; then
+            start_all_devcontainers
+        fi
+        service=$(get_service_selection)
+        gui_bridge
+        exec_container "$service"
+        ;;
+    stop | s)
+        case "$2" in
+            "")
+                stop_devcontainer $(get_service_selection)
+                ;;
+            all|a)
+                stop_all_devcontainers
+                ;;
+        esac
+        ;;
+    build | b)
+        build_devcontainers
+        ;;
+    remove | rm)
+        case "$2" in
+            "")
+                remove_devcontainer $(get_service_selection)
+                ;;
+            all|a)
+                remove_devcontainers
+                ;;
+        esac
+        ;;
+    help | -h)
+        help
+        ;;
+    *)
+        log_error "Unknown argument."
+        help
+        ;;
+esac
