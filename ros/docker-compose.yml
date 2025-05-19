@@ -12,7 +12,8 @@ services:
     volumes:
       - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./shared:/home/shared:rw
+      - ./shared:/shared:rw
+      - ros_ws:/home/$USERNAME/ws:rw
     environment:
       SSH_AUTH_SOCK: /ssh-agent
       DISPLAY: $DISPLAY
@@ -26,8 +27,11 @@ services:
   # Used to set correct U/G(ID) for shared folder
   volume-init:
     image: busybox
-    command: ["chown", "-R", "1000:1000", "/data"]
+    command: ["chown", "-R", "1000:1000", "/shared"]
     volumes:
-      - ./shared:/data
+      - ./shared:/shared
     entrypoint: ""
     restart: "no"
+
+volumes:
+  ros_ws:
