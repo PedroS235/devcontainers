@@ -24,6 +24,26 @@ services:
     depends_on:
       - volume-init
 
+  sgraphs:
+    image: devcontainer_sgraphs:ros_humble
+    container_name: devcontainer_ros_sgraphs
+    build:
+      context: .
+      dockerfile: sgraphs.Dockerfile
+      args:
+        USECOLCON_JOBSRNAME: $USERNAME
+        COLCON_JOBS: 10
+    volumes:
+      - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /run/media/pedros/smapper:/datasets
+    environment:
+      DISPLAY: $DISPLAY
+    network_mode: "host"
+    privileged: true
+    stdin_open: true
+    tty: true
+
   # Used to set correct U/G(ID) for shared folder
   volume-init:
     image: busybox
