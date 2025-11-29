@@ -34,15 +34,25 @@ apt-get install -y nodejs
 rm nodesource_setup.sh
 
 # -----------------------------------------------------------------------------
-# Install tools as the remote user (if specified)
+# Detect the non-root user to install tools for
 # -----------------------------------------------------------------------------
 USER_HOME="/root"
 INSTALL_USER="root"
 
-# Check if a remote user is configured
-if [ -n "${_REMOTE_USER}" ] && [ "${_REMOTE_USER}" != "root" ]; then
+# Try to find a non-root user (created by common-utils feature)
+# Look for users with UID >= 1000 and < 60000 (avoiding system users)
+DETECTED_USER=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 60000 { print $1; exit }')
+
+if [ -n "${DETECTED_USER}" ]; then
+    INSTALL_USER="${DETECTED_USER}"
+    USER_HOME=$(getent passwd "${DETECTED_USER}" | cut -d: -f6)
+    echo "Detected non-root user: ${INSTALL_USER} (home: ${USER_HOME})"
+elif [ -n "${_REMOTE_USER}" ] && [ "${_REMOTE_USER}" != "root" ]; then
     INSTALL_USER="${_REMOTE_USER}"
     USER_HOME="/home/${_REMOTE_USER}"
+    echo "Using _REMOTE_USER: ${INSTALL_USER} (home: ${USER_HOME})"
+else
+    echo "No non-root user detected, installing for root"
 fi
 
 echo "Installing user tools for: ${INSTALL_USER} (home: ${USER_HOME})"

@@ -1,6 +1,6 @@
 {
   "id": "pedro-dev-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Pedro's Development Tools",
   "description": "Installs Neovim, fzf, lazygit, uv, and custom dotfiles configuration",
   "documentationURL": "https://github.com/PedroS235/devcontainers",
