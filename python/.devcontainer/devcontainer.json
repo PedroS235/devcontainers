@@ -1,0 +1,40 @@
+{
+  "name": "Python Development",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "devuser",
+      "uid": "1000",
+      "gid": "1000",
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "latest",
+      "installTools": true
+    },
+    "ghcr.io/pedros235/devcontainers/pedro-dev-tools:1": {
+      "nvimVersion": "0.11.4",
+      "nodeVersion": "22",
+      "installDotfiles": true,
+      "dotfilesBranch": "omarchy",
+      "installUv": true
+    }
+  },
+  "remoteUser": "devuser",
+  "forwardPorts": [8000],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": [
+        "ms-python.python",
+        "asvetliakov.vscode-neovim"
+      ]
+    }
+  }
+}

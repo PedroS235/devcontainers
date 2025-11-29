@@ -1,0 +1,35 @@
+{
+  "id": "pedro-dev-tools",
+  "version": "1.0.0",
+  "name": "Pedro's Development Tools",
+  "description": "Installs Neovim, fzf, lazygit, uv, and custom dotfiles configuration",
+  "documentationURL": "https://github.com/PedroS235/devcontainers",
+  "options": {
+    "nvimVersion": {
+      "type": "string",
+      "default": "0.11.4",
+      "description": "Version of Neovim to install"
+    },
+    "nodeVersion": {
+      "type": "string",
+      "default": "22",
+      "description": "Version of Node.js to install (for Neovim plugins)"
+    },
+    "installDotfiles": {
+      "type": "boolean",
+      "default": true,
+      "description": "Install Pedro's Neovim configuration from dotfiles"
+    },
+    "dotfilesBranch": {
+      "type": "string",
+      "default": "omarchy",
+      "description": "Branch of the dotfiles repository to use"
+    },
+    "installUv": {
+      "type": "boolean",
+      "default": false,
+      "description": "Install UV Python package manager"
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

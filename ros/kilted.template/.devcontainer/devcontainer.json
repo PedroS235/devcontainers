@@ -1,0 +1,42 @@
+{
+  "name": "ROS Kilted Development",
+  "initializeCommand": "xhost +local:",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "devuser",
+      "uid": "1000",
+      "gid": "1000",
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "upgradePackages": true
+    },
+    "ghcr.io/pedros235/devcontainers/pedro-dev-tools:1": {
+      "nvimVersion": "0.11.4",
+      "nodeVersion": "22",
+      "installDotfiles": true,
+      "dotfilesBranch": "omarchy",
+      "installUv": true
+    },
+    "ghcr.io/pedros235/devcontainers/gui-support:1": {}
+  },
+  "remoteUser": "devuser",
+  "privileged": true,
+  "runArgs": ["--network=host"],
+  "forwardPorts": [],
+  "postCreateCommand": "echo 'source /etc/profile.d/extra.bash' >> ~/.bashrc && source ~/.bashrc",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-python.python",
+        "ranch-hand-robotics.rde-pack"
+      ]
+    }
+  }
+}

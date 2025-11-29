@@ -1,36 +1,144 @@
 # Devcontainers
 
-This repository contains some of my development containers, where it is tailored to be used with my personal neovim configuration, and for that matter any neovim configuration.
+A collection of development container templates and reusable features using the [devcontainer.json](https://containers.dev/) specification and [DevPod](https://devpod.sh/).
 
-## Ros Devcontainer
-For the moment the only available is my devcontainer for ros2 development. I have been using this setup for quite some time now and it works flawlessly. You have all your GUI applications as usual and you have your neovim config inside the container,
-making it very seamlessly integration with ROS. You can create more than one container, one for each distro for instance.
+## Background
 
-Additionally, there is a shared folder, which by default mounts from `./ros/shared` into `/mnt/shared`. (The permissions are set according to your user, so no need to use sudo)
+After maintaining various development containers primarily for ROS development—complete with custom Dockerfiles, GUI app support, bash automation scripts, and later Docker Compose files—I've transitioned to a more universal approach that works across different editors (Vim/Neovim, VSCode, Cursor, etc.) by adopting the devcontainer.json philosophy together with DevPod.
 
-> [!IMPORTANT]
-> I am passing the ssh-agent socket inside the container in order to have my ssh keys working inside the container. This is the advised way of using them inside the container. If you don't have an ssh-agent running, you can for instance paste the following in your .bashrc/.zshrc
-> which will run the ssh agent and will add the key `id_ed25519` on my `.ssh` folder.
-> ```bash
-> # ----------- SSH Agent -----------
-> 
-> if [[ -z "$SSH_AUTH_SOCK" ]] && ! pgrep -u "$USER" ssh-agent > /dev/null; then
->    eval "$(ssh-agent -t 1h)"
->    ssh-add $HOME/.ssh/id_ed25519
-> fi
-> 
-> # -------------- End --------------
-> ```
+This system is more flexible than my previous global Docker Compose setup, providing per-project isolation while maintaining the same streamlined development workflow.
 
-### Script
+## Features
 
-I offer a script under `./scripts/ros`. This is a simple managing script where you can start one or more of the ros services available, stop, remove and enter. I am using [fzf](https://github.com/junegunn/fzf) in order to choose my desired container I want to enter when more than one service is available.
-Before you use the script, you will need to open it and change the variable `DOCKER_COMPOSE_FILE` to match the location of where the `./ros/docker-compose.yml` file is located in your system. Then, to make things easier you can create a symlink to `~/.loca/bin` for instance. Example:
+This repository provides **reusable devcontainer features** that can be used in any project:
+
+### pedro-dev-tools
+**`ghcr.io/pedros235/devcontainers/pedro-dev-tools:1`**
+
+A comprehensive development environment with:
+- Neovim (v0.11.4) with custom configuration
+- Node.js (for Neovim plugins)
+- fzf (fuzzy finder)
+- lazygit (terminal UI for git)
+- UV (Python package manager)
+- Custom dotfiles from GitHub
+
+[View feature documentation →](features/pedro-dev-tools/README.md)
+
+### gui-support
+**`ghcr.io/pedros235/devcontainers/gui-support:1`**
+
+X11 GUI support for running graphical applications (RViz, Gazebo, etc.) in containers:
+- X11 socket mounting
+- DISPLAY environment variable
+- Required X11 libraries
+- Privileged container mode
+
+[View feature documentation →](features/gui-support/README.md)
+
+## Templates
+
+Pre-configured templates demonstrating feature usage:
+
+### ROS Development (`ros/kilted.template`)
+ROS Kilted development environment with GUI support for RViz2 and other visualization tools.
+
+**Features used:**
+- `common-utils` - User creation and sudo access
+- `pedro-dev-tools` - Development tooling
+- `gui-support` - X11 forwarding for RViz2
+
+### Python Development (`python`)
+Python development environment with UV package manager.
+
+**Features used:**
+- `common-utils` - User creation and sudo access
+- `python` - Python installation
+- `pedro-dev-tools` - Development tooling
+
+## Getting Started
+
+### Prerequisites
+
+Install DevPod:
+- **Website**: https://devpod.sh/
+- **CLI Installation**: https://devpod.sh/docs/getting-started/install
+
+### Using Templates
+
+1. Copy a template to your project directory
+2. Adapt the Dockerfile to include your project-specific dependencies
+3. Run `devpod up . --ide none` to create the container
+
+DevPod will automatically set up the SSH config, allowing you to simply `ssh <containername>` to access the container.
+
+**Example with IDE auto-detection:**
 ```bash
-ln -sf path_to_root/scripts/ros ~/.local/bin
+cd ros/kilted.template
+devpod up .
 ```
-> [!NOTE]
-> For the above symlink to work, `~/.local/bin` must be in your `$PATH`. If you don't have it yet, you can add the following line to your .bashrc/.zshrc
-> ```bash
-> export PATH=$PATH:$HOME/.local/bin # Make sure you have ~/.local/bin in your path
-> ```
+This will open a supported IDE if installed, or fall back to a web-based VSCode instance.
+
+**Example with no IDE (SSH only):**
+```bash
+devpod up . --ide none
+```
+
+### Using Features in Your Own Projects
+
+Add features to your `devcontainer.json`:
+
+```json
+{
+  "name": "My Project",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "devuser"
+    },
+    "ghcr.io/pedros235/devcontainers/pedro-dev-tools:1": {
+      "nvimVersion": "0.11.4",
+      "installUv": true
+    }
+  },
+  "remoteUser": "devuser"
+}
+```
+
+For projects needing GUI support, add:
+```json
+{
+  "initializeCommand": "xhost +local:",
+  "features": {
+    "ghcr.io/pedros235/devcontainers/gui-support:1": {}
+  }
+}
+```
+
+### VSCode Users
+
+The templates and features work seamlessly with the VSCode Dev Containers extension.
+
+## Publishing Features
+
+Features are automatically published to GitHub Container Registry via GitHub Actions. To publish:
+
+1. Make changes to features in the `features/` directory
+2. Commit and push to the `main` branch
+3. Go to **Actions** → **Release Dev Container Features** → **Run workflow**
+4. After first publish, make packages public in [GitHub Packages settings](https://github.com/PedroS235?tab=packages)
+
+## Why DevPod?
+
+DevPod provides per-project container isolation while maintaining a simple workflow. It automatically manages SSH configuration, making it seamless to connect with your preferred editor—whether that's Neovim, VSCode, or any other SSH-capable tool.
+
+## Why Features?
+
+Features are:
+- **Reusable** - Use across multiple projects
+- **Composable** - Mix and match as needed
+- **Cacheable** - Faster rebuilds
+- **Portable** - Work everywhere (DevPod, VSCode, Codespaces)
+- **Versioned** - Pin to specific versions for stability

@@ -1,0 +1,23 @@
+{
+  "id": "gui-support",
+  "version": "1.0.0",
+  "name": "X11 GUI Support",
+  "description": "Enables X11 forwarding for running GUI applications in the container",
+  "documentationURL": "https://github.com/PedroS235/devcontainers",
+  "mounts": [
+    {
+      "source": "/tmp/.X11-unix",
+      "target": "/tmp/.X11-unix",
+      "type": "bind"
+    }
+  ],
+  "containerEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}"
+  },
+  "init": true,
+  "customizations": {
+    "vscode": {
+      "settings": {}
+    }
+  }
+}
