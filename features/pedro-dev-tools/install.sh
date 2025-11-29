@@ -46,16 +46,20 @@ DETECTED_USER=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 60000 { print $1; ex
 if [ -n "${DETECTED_USER}" ]; then
     INSTALL_USER="${DETECTED_USER}"
     USER_HOME=$(getent passwd "${DETECTED_USER}" | cut -d: -f6)
-    echo "Detected non-root user: ${INSTALL_USER} (home: ${USER_HOME})"
+    echo "Installing tools for detected user: ${INSTALL_USER}"
 elif [ -n "${_REMOTE_USER}" ] && [ "${_REMOTE_USER}" != "root" ]; then
     INSTALL_USER="${_REMOTE_USER}"
     USER_HOME="/home/${_REMOTE_USER}"
-    echo "Using _REMOTE_USER: ${INSTALL_USER} (home: ${USER_HOME})"
+    echo "Installing tools for remote user: ${INSTALL_USER}"
 else
-    echo "No non-root user detected, installing for root"
+    echo "Installing tools for root user"
 fi
 
-echo "Installing user tools for: ${INSTALL_USER} (home: ${USER_HOME})"
+# Verify home directory exists
+if [ ! -d "${USER_HOME}" ]; then
+    echo "ERROR: Home directory ${USER_HOME} does not exist!"
+    exit 1
+fi
 
 # Function to run commands as the target user
 run_as_user() {
