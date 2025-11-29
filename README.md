@@ -13,9 +13,11 @@ This system is more flexible than my previous global Docker Compose setup, provi
 This repository provides **reusable devcontainer features** that can be used in any project:
 
 ### pedro-dev-tools
+
 **`ghcr.io/pedros235/devcontainers/pedro-dev-tools:1`**
 
 A comprehensive development environment with:
+
 - Neovim (v0.11.4) with custom configuration
 - Node.js (for Neovim plugins)
 - fzf (fuzzy finder)
@@ -26,9 +28,11 @@ A comprehensive development environment with:
 [View feature documentation →](features/pedro-dev-tools/README.md)
 
 ### gui-support
+
 **`ghcr.io/pedros235/devcontainers/gui-support:1`**
 
 X11 GUI support for running graphical applications (RViz, Gazebo, etc.) in containers:
+
 - X11 socket mounting
 - DISPLAY environment variable
 - Required X11 libraries
@@ -41,17 +45,21 @@ X11 GUI support for running graphical applications (RViz, Gazebo, etc.) in conta
 Pre-configured templates demonstrating feature usage:
 
 ### ROS Development (`ros/kilted.template`)
+
 ROS Kilted development environment with GUI support for RViz2 and other visualization tools.
 
 **Features used:**
+
 - `common-utils` - User creation and sudo access
 - `pedro-dev-tools` - Development tooling
 - `gui-support` - X11 forwarding for RViz2
 
 ### Python Development (`python`)
+
 Python development environment with UV package manager.
 
 **Features used:**
+
 - `common-utils` - User creation and sudo access
 - `python` - Python installation
 - `pedro-dev-tools` - Development tooling
@@ -61,6 +69,7 @@ Python development environment with UV package manager.
 ### Prerequisites
 
 Install DevPod:
+
 - **Website**: https://devpod.sh/
 - **CLI Installation**: https://devpod.sh/docs/getting-started/install
 
@@ -73,13 +82,16 @@ Install DevPod:
 DevPod will automatically set up the SSH config, allowing you to simply `ssh <containername>` to access the container.
 
 **Example with IDE auto-detection:**
+
 ```bash
 cd ros/kilted.template
 devpod up .
 ```
+
 This will open a supported IDE if installed, or fall back to a web-based VSCode instance.
 
 **Example with no IDE (SSH only):**
+
 ```bash
 devpod up . --ide none
 ```
@@ -108,6 +120,7 @@ Add features to your `devcontainer.json`:
 ```
 
 For projects needing GUI support, add:
+
 ```json
 {
   "initializeCommand": "xhost +local:",
@@ -129,16 +142,3 @@ Features are automatically published to GitHub Container Registry via GitHub Act
 2. Commit and push to the `main` branch
 3. Go to **Actions** → **Release Dev Container Features** → **Run workflow**
 4. After first publish, make packages public in [GitHub Packages settings](https://github.com/PedroS235?tab=packages)
-
-## Why DevPod?
-
-DevPod provides per-project container isolation while maintaining a simple workflow. It automatically manages SSH configuration, making it seamless to connect with your preferred editor—whether that's Neovim, VSCode, or any other SSH-capable tool.
-
-## Why Features?
-
-Features are:
-- **Reusable** - Use across multiple projects
-- **Composable** - Mix and match as needed
-- **Cacheable** - Faster rebuilds
-- **Portable** - Work everywhere (DevPod, VSCode, Codespaces)
-- **Versioned** - Pin to specific versions for stability

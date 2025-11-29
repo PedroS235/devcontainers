@@ -14,14 +14,19 @@ Enables X11 forwarding for running GUI applications (like RViz2, Gazebo, etc.) f
 
 ```json
 {
+  "initializeCommand": "xhost +local:",
   "features": {
     "ghcr.io/pedros235/devcontainers/gui-support:1": {}
   },
-  "initializeCommand": "xhost +local:"
+  "remoteEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}"
+  }
 }
 ```
 
-**Important:** You must include `"initializeCommand": "xhost +local:"` in your devcontainer.json to allow X11 connections from the container.
+**Important:** You must include:
+- `"initializeCommand": "xhost +local:"` - Allows X11 connections from the container
+- `"remoteEnv": {"DISPLAY": "${localEnv:DISPLAY}"}` - Forwards the DISPLAY variable to the container
 
 ## Example: Basic GUI Support
 
@@ -32,6 +37,9 @@ For simple GUI applications (basic X11 forwarding):
   "initializeCommand": "xhost +local:",
   "features": {
     "ghcr.io/pedros235/devcontainers/gui-support:1": {}
+  },
+  "remoteEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}"
   }
 }
 ```
@@ -52,6 +60,9 @@ For 3D applications, simulators, or hardware-accelerated graphics (RViz2, Gazebo
     },
     "ghcr.io/pedros235/devcontainers/pedro-dev-tools:1": {},
     "ghcr.io/pedros235/devcontainers/gui-support:1": {}
+  },
+  "remoteEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}"
   },
   "privileged": true,
   "runArgs": ["--network=host"]

@@ -11,9 +11,6 @@
       "type": "bind"
     }
   ],
-  "containerEnv": {
-    "DISPLAY": "${localEnv:DISPLAY}"
-  },
   "init": true,
   "customizations": {
     "vscode": {

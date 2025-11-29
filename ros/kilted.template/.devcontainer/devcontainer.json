@@ -26,6 +26,9 @@
   "privileged": true,
   "runArgs": ["--network=host"],
   "forwardPorts": [],
+  "remoteEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}"
+  },
   "postCreateCommand": "echo 'source /etc/profile.d/extra.bash' >> ~/.bashrc && source ~/.bashrc",
   "customizations": {
     "vscode": {
