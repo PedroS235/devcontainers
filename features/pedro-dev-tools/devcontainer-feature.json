@@ -1,6 +1,6 @@
 {
   "id": "pedro-dev-tools",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "name": "Pedro's Development Tools",
   "description": "Installs Neovim, fzf, lazygit, uv, and custom dotfiles configuration",
   "documentationURL": "https://github.com/PedroS235/devcontainers",
@@ -31,5 +31,7 @@
       "description": "Install UV Python package manager"
     }
   },
-  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
 }
