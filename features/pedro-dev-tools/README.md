@@ -15,8 +15,8 @@ Installs Neovim, fzf, lazygit, uv, and custom dotfiles configuration
 
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
-| nvimVersion | Version of Neovim to install | string | 0.11.4 |
-| nodeVersion | Version of Node.js to install (for Neovim plugins) | string | 22 |
+| nvimVersion | Version of Neovim to install | string | 0.12.2 |
+| nodeVersion | Version of Node.js to install (for Neovim plugins) | string | 26 |
 | installDotfiles | Install Pedro's Neovim configuration from dotfiles | boolean | true |
 | dotfilesBranch | Branch of the dotfiles repository to use | string | omarchy |
 | installUv | Install UV Python package manager | boolean | false |
