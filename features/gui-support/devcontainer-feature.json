@@ -1,6 +1,6 @@
 {
   "id": "gui-support",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "name": "X11 GUI Support",
   "description": "Enables X11 forwarding for running GUI applications in the container",
   "documentationURL": "https://github.com/PedroS235/devcontainers",
@@ -10,6 +10,11 @@
       "target": "/tmp/.X11-unix",
       "type": "bind"
     }
+  ],
+  "runArgs": [
+    "--device=/dev/dri",
+    "--gpus=all",
+    "--group-add=video"
   ],
   "init": true,
   "customizations": {
