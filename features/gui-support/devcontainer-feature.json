@@ -11,11 +11,6 @@
       "type": "bind"
     }
   ],
-  "runArgs": [
-    "--device=/dev/dri",
-    "--gpus=all",
-    "--group-add=video"
-  ],
   "init": true,
   "customizations": {
     "vscode": {
